@@ -1,0 +1,49 @@
+//// Design a simple C program using ordinary pipes in which a parent and child processes exchange greeting messages. For example, the parent process may send the message “Hello Child Process”, and the child process may return “Hi Parent Process”. Use UNIX pipes to write this program. For reference, see http://tldp.org/LDP/lpg/node11.html. Note that this URL only shows an example of a unidirectional pipe. You need to have bidirectional behavior in your program for which you will need two pipes.
+
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <string.h>
+#include <sched.h>
+#include <sys/time.h>
+#include <stdlib.h>
+int main(void)
+{
+int fd[2], fd1[2], nbytes;
+pid_t childpid;
+char string[] = "Hi Parent!\n";
+char string1[] = "Hello Child!\n";
+char readbuffer[80];
+pipe(fd);
+pipe(fd1);
+if((childpid = fork()) == -1)
+{
+perror("fork");
+exit(1); 
+}
+if(childpid == 0)
+{
+
+/* Child process closes up input side of pipe */
+close(fd[0]);
+close(fd1[1]);
+/* Send "string" through the output side of pipe */
+write(fd[1], string, (strlen(string)+1));
+nbytes = read(fd1[0], readbuffer, sizeof(readbuffer));
+printf("Received string: %s", readbuffer);
+exit(0);
+}
+else
+{
+/* Parent process closes up output side of pipe */
+close(fd[1]);
+close(fd1[0]);
+/* Read in a string from the pipe */
+nbytes = read(fd[0], readbuffer, sizeof(readbuffer));
+printf("Received string: %s", readbuffer);
+
+write(fd1[1], string1, (strlen(string1)+1));
+}
+return(0);
+}
