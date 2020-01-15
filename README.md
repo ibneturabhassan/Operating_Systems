@@ -6,3 +6,7 @@ Design a simple C program using ordinary pipes in which a parent and child proce
 
 # Print_Multiplication_Table_in_Shell
 Write a shell script to print the multiplication table for the given number. You can take that number as input from the user.
+
+# Basic_Calculator_in_shell
+Write a shell script to  make a simple calculator which should be capable of performing basic calculations.
+Also add a feature of repeated inputs from the user.
